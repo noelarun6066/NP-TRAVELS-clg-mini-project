@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NP Travels</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(to right, #00c6ff, #0072ff);
+      color: #fff;
+      overflow-x: hidden;
+      transition: all 0.5s ease-in-out;
+    }
+    header {
+      padding: 40px 20px 20px;
+      animation: fadeInDown 1s ease-out;
+    }
+    header h1 { font-size: 3em; color: #fff; }
+    .quote {
+      font-style: italic;
+      margin-top: 10px;
+      font-size: 1.2em;
+      color: #d4f1f9;
+      text-align: center;
+    }
+    .hamburger {
+      display: block; position: fixed; top: 20px; left: 20px;
+      cursor: pointer; z-index: 1001;
+    }
+    .hamburger div {
+      width: 30px; height: 4px; background-color: #fff;
+      margin: 5px 0; transition: all 0.3s ease;
+    }
+    nav {
+      position: fixed; left: 0; top: 0; height: 100%; width: 200px;
+      background-color: #004466;
+      transform: translateX(-100%);
+      transition: transform 0.5s ease; padding-top: 60px; z-index: 1000;
+    }
+    nav.active { transform: translateX(0); }
+    nav button {
+      display: block; width: 100%; padding: 15px;
+      border: none; background: none; text-align: left;
+      font-size: 1em; color: #fff; cursor: pointer;
+    }
+    nav button:hover { background-color: #0077aa; }
+    .content {
+      text-align: center; padding: 20px;
+      animation: fadeInUp 0.5s ease;
+    }
+    .bus-list {
+      display: flex; justify-content: center;
+      flex-wrap: wrap; gap: 20px; margin-top: 20px;
+    }
+    .bus-card {
+      background-color: #fff; color: #000;
+      border-radius: 10px; padding: 20px;
+      width: 250px; cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      transition: transform 0.3s ease;
+    }
+    .bus-card:hover { transform: scale(1.05); }
+    #bookingMenu, #aboutPage, #successMessage {
+      display: none; padding: 20px; max-width: 600px;
+      margin: 50px auto 20px; background-color: #ffffffdd;
+      color: #000; border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    .main-btn {
+      padding: 12px 25px; font-size: 1em;
+      background-color: #00bfff; color: white;
+      border: none; border-radius: 5px;
+      margin: 10px 0; transition: background 0.3s ease;
+    }
+    .main-btn:hover { background-color: #009acd; }
+    .passenger-name { margin: 5px 0; }
+    input[type="text"], input[type="date"], select {
+      width: 100%; padding: 10px; margin: 5px 0;
+      border-radius: 5px; border: 1px solid #ccc;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeInZoom {
+      from { opacity: 0; transform: scale(0.5) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .success-animation {
+      animation: fadeInZoom 1s ease-out;
+      margin-bottom: 5px ;
+    }
+    .download-btn {
+  margin-top: 40px;
+  display: inline-block;
+}
+  </style>
+</head>
+<body>
+  
+  <div class="hamburger" onclick="toggleMenu()">
+    <div></div><div></div><div></div>
+  </div>
+  <nav id="sidebarMenu">
+    <button onclick="showHome()">Home</button>
+    <button onclick="showAbout()">About</button>
+    <button onclick="showBuses()">Buses</button>
+    <button onclick="showBooking()">Book Tickets</button>
+  </nav>
+
+  <div id="homePage">
+    <header>
+     <font size=6> <b><h1>NP TRAVELS</h1></b></font>
+<font size= 18>
+      <p>NP Travels is your reliable travel partner with a fleet of efficient buses ensuring safe, comfortable, and on-time journeys. We pride ourselves on excellent customer service and smooth travel experiences.</p>
+</font>      
+<font size= 6><p class="quote">"Travel is the only thing you buy that makes you richer."</p>
+      <p class="quote">"Life is short and the world is wide."</p>
+</font>    
+</header>
+    <div class="content">
+      <button class="main-btn" onclick="showBooking()">Book Tickets</button>
+    </div>
+  </div>
+
+  <div id="booking" class="content" style="display:none">
+    <h2>Select a Bus to Book</h2>
+    <div class="bus-list">
+      <div class="bus-card" onclick="selectBus('NP Express', 'Kochi - Bengaluru', 25, 800)">
+        NP Express<br/>Route: Kochi - Bengaluru<br/>Seats: 25
+      </div>
+      <div class="bus-card" onclick="selectBus('NP Deluxe', 'Kochi - Hyderabad', 18, 1000)">
+        NP Deluxe<br/>Route: Kochi - Hyderabad<br/>Seats: 18
+      </div>
+      <div class="bus-card" onclick="selectBus('NP Sleeper', 'Kochi - Pune', 10, 1200)">
+        NP Sleeper<br/>Route: Kochi - Pune<br/>Seats: 10
+      </div>
+    </div>
+  </div>
+
+  <div id="bookingMenu">
+    <h2 id="busTitle"></h2>
+    <p id="busRoute"></p>
+    <p id="busSeats"></p>
+    <p><strong>Ticket Price:</strong> ₹<span id="ticketPrice"></span></p>
+    <label>Passengers:</label>
+    <select id="passengerCount" onchange="renderPassengerInputs()">
+      <option value="1">1</option><option value="2">2</option>
+      <option value="3">3</option><option value="4">4</option>
+    </select>
+    <div id="passengerInputs"></div>
+    <p><label for="journeyDate">Select Journey Date:</label>
+    <input type="date" id="journeyDate" /></p>
+    <p><strong>Total Price:</strong> ₹<span id="totalPrice"></span></p>
+    <button class="main-btn" onclick="confirmBooking()">Confirm Booking</button>
+    <button class="main-btn" style="background-color:#ccc; color:#000" onclick="showBooking()">Back</button>
+    <a id="downloadLinkHidden" style="display:none;" download="NP_Ticket.pdf">Download Ticket</a>
+  </div>
+
+  <div id="aboutPage">
+    <h2>About NP Travels</h2>
+    <p>NP Travels is situated in Kochi City and has been serving customers in the travel industry for the past 5 years. We are committed to offering high-quality, efficient, and reliable bus travel experiences.</p>
+    <p><strong>Phone:</strong> 9994453421</p>
+    <p><strong>Email:</strong> nptravels@gmail.com</p>
+  </div>
+
+  <div id="busesPage" class="content" style="display:none">
+    <h2>Our Buses</h2>
+    <div class="bus-list">
+      <div class="bus-card">
+        <img src="EXPRESS.png" alt="NP Express" style="width:100%; border-radius:10px;">
+        <h3>NP Express</h3>
+      </div>
+      <div class="bus-card">
+        <img src="bus.jpg" alt="NP Deluxe" style="width:100%; border-radius:10px;">
+        <h3>NP Deluxe</h3>
+      </div>
+      <div class="bus-card">
+        <img src="hh.png" alt="NP Sleeper" style="width:100%; border-radius:10px;">
+        <h3>NP Sleeper</h3>
+      </div>
+    </div>
+  </div>
+
+  <div id="successMessage" class="content success-animation">
+    <h2>Booking Successful!</h2>
+    <a id="downloadLinkVisible" class="main-btn download-btn" download="NP_Ticket.pdf">Download Ticket</a>
+  </div>
+
+  <script>
+    const { jsPDF } = window.jspdf;
+    let currentBus = {};
+
+    function toggleMenu() {
+      document.getElementById('sidebarMenu').classList.toggle('active');
+    }
+
+    function closeMenu() {
+      document.getElementById('sidebarMenu').classList.remove('active');
+    }
+
+    function showHome() {
+      closeMenu();
+      hideAll();
+      document.getElementById('homePage').style.display = 'block';
+    }
+
+    function showBooking() {
+      closeMenu();
+      hideAll();
+      document.getElementById('booking').style.display = 'block';
+    }
+
+    function showAbout() {
+      closeMenu();
+      hideAll();
+      document.getElementById('aboutPage').style.display = 'block';
+    }
+
+    function showBuses() {
+      closeMenu();
+      hideAll();
+      document.getElementById('busesPage').style.display = 'block';
+    }
+
+    function hideAll() {
+      ['homePage','booking','bookingMenu','aboutPage','successMessage','busesPage'].forEach(id => {
+        document.getElementById(id).style.display = 'none';
+      });
+    }
+
+    function selectBus(name, route, seats, price) {
+      hideAll();
+      document.getElementById('bookingMenu').style.display = 'block';
+      document.getElementById('busTitle').innerText = `Booking for ${name}`;
+      document.getElementById('busRoute').innerText = `Route: ${route}`;
+      document.getElementById('busSeats').innerText = `Seats Available: ${seats}`;
+      currentBus = { name, route, seats, price };
+      renderPassengerInputs();
+      document.getElementById('downloadLinkHidden').style.display = 'none';
+    }
+
+    function renderPassengerInputs() {
+      const count = parseInt(document.getElementById('passengerCount').value);
+      const container = document.getElementById('passengerInputs');
+      container.innerHTML = '';
+      for (let i = 1; i <= count; i++) {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.placeholder = `Passenger ${i} Name`;
+        input.className = 'passenger-name';
+        container.appendChild(input);
+      }
+      document.getElementById('ticketPrice').innerText = currentBus.price;
+      document.getElementById('totalPrice').innerText = currentBus.price * count;
+    }
+
+    function confirmBooking() {
+      const title = document.getElementById('busTitle').innerText;
+      const route = document.getElementById('busRoute').innerText;
+      const journeyDate = document.getElementById('journeyDate').value;
+      const names = Array.from(document.querySelectorAll('.passenger-name')).map(input => input.value.trim());
+
+      if (!journeyDate) {
+        alert("Please select a journey date.");
+        return;
+      }
+
+      if (names.some(name => name === '')) {
+        alert("Please enter all passenger names.");
+        return;
+      }
+
+      const totalPrice = currentBus.price * names.length;
+      const doc = new jsPDF();
+      doc.text(title, 10, 10);
+      doc.text(route, 10, 20);
+      doc.text(`Date of Journey: ${journeyDate}`, 10, 30);
+      doc.text("Passengers:", 10, 40);
+      names.forEach((name, i) => {
+        doc.text(`${i+1}. ${name}`, 10, 50 + i * 10);
+      });
+      doc.text(`Total Price: rs${totalPrice}`, 10, 60 + names.length * 10);
+      doc.text("Thank you for choosing NP Travels!", 10, 70 + names.length * 10);
+
+      const pdfURL = doc.output("bloburl");
+      const link = document.getElementById('downloadLinkVisible');
+      link.href = pdfURL;
+
+      hideAll();
+      document.getElementById('successMessage').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
