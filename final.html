@@ -15,9 +15,22 @@
       overflow-x: hidden;
       transition: all 0.5s ease-in-out;
     }
-    header {
+    .header {
       padding: 40px 20px 20px;
       animation: fadeInDown 1s ease-out;
+      h1 {
+          padding: 4rem 0;
+          font-size:3em;
+        }
+      @media only screen and (max-width: 480px){
+        h1 {
+          padding: 2rem 0;
+          font-size: 4rem;
+        }
+        p {
+          font-size: 2rem;
+        }
+      }
     }
     header h1 { font-size: 3em; color: #fff; }
     .quote {
@@ -119,7 +132,7 @@
   </nav>
 
   <div id="homePage">
-    <header>
+    <header class="header">
      <font size=6> <b><h1>NP TRAVELS</h1></b></font>
 <font size= 18>
       <p>NP Travels is your reliable travel partner with a fleet of efficient buses ensuring safe, comfortable, and on-time journeys. We pride ourselves on excellent customer service and smooth travel experiences.</p>
