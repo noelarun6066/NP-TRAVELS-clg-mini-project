@@ -6,7 +6,7 @@
   <title>NP Travels</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap');
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Quicksand', sans-serif;
@@ -135,7 +135,7 @@
     <header class="header">
      <font size=6> <b><h1>NP TRAVELS</h1></b></font>
 <font size= 18>
-      <p>NP Travels is your reliable travel partner with a fleet of efficient buses ensuring safe, comfortable, and on-time journeys. We pride ourselves on excellent customer service and smooth travel experiences.</p>
+      <p> Travels is your reliable travel partner with a fleet of efficient buses ensuring safe, comfortable, and on-time journeys. We pride ourselves on excellent customer service and smooth travel experiences.</p>
 </font>      
 <font size= 6><p class="quote">"Travel is the only thing you buy that makes you richer."</p>
       <p class="quote">"Life is short and the world is wide."</p>
@@ -172,9 +172,18 @@
       <option value="3">3</option><option value="4">4</option>
     </select>
     <div id="passengerInputs"></div>
+  <p>
+  <label>Select Food Options:</label><br/>
+  <input type="checkbox" name="foodOption" value="Veg Meal" data-price="100"> Veg Meal (₹150)<br/>
+  <input type="checkbox" name="foodOption" value="Non-Veg Meal" data-price="150"> Non-Veg Meal (₹200)<br/>
+  <input type="checkbox" name="foodOption" value="Snacks + Drink" data-price="100"> Snacks + Drink (₹100)<br/>
+   <input type="checkbox" name="foodOption" value="Biriyani" data-price="200"> Biriyani (₹200)<br/>
+</p>
     <p><label for="journeyDate">Select Journey Date:</label>
     <input type="date" id="journeyDate" /></p>
-    <p><strong>Total Price:</strong> ₹<span id="totalPrice"></span></p>
+   <p><strong>Ticket Total:</strong> ₹<span id="ticketTotal"></span></p>
+<p><strong>Food Total:</strong> ₹<span id="foodTotal">0</span></p>
+<p><strong>Grand Total:</strong> ₹<span id="totalPrice"></span></p>
     <button class="main-btn" onclick="confirmBooking()">Confirm Booking</button>
     <button class="main-btn" style="background-color:#ccc; color:#000" onclick="showBooking()">Back</button>
     <a id="downloadLinkHidden" style="display:none;" download="NP_Ticket.pdf">Download Ticket</a>
@@ -275,6 +284,7 @@
         container.appendChild(input);
       }
       document.getElementById('ticketPrice').innerText = currentBus.price;
+      updateTotal();
       document.getElementById('totalPrice').innerText = currentBus.price * count;
     }
 
@@ -283,6 +293,9 @@
       const route = document.getElementById('busRoute').innerText;
       const journeyDate = document.getElementById('journeyDate').value;
       const names = Array.from(document.querySelectorAll('.passenger-name')).map(input => input.value.trim());
+       const foodCheckboxes = Array.from(document.querySelectorAll('input[name="foodOption"]:checked'));
+const foodOption = foodCheckboxes.map(cb => cb.value).join(", ") || "None";
+const foodTotal = foodCheckboxes.reduce((sum, cb) => sum + parseInt(cb.dataset.price), 0);
 
       if (!journeyDate) {
         alert("Please select a journey date.");
@@ -303,8 +316,12 @@
       names.forEach((name, i) => {
         doc.text(`${i+1}. ${name}`, 10, 50 + i * 10);
       });
-      doc.text(`Total Price: rs${totalPrice}`, 10, 60 + names.length * 10);
-      doc.text("Thank you for choosing NP Travels!", 10, 70 + names.length * 10);
+      const yOffset = 60 + names.length * 10;
+      doc.text(`Selected Food Option(s): ${foodOption}`, 10, yOffset);
+doc.text(`Food Total: Rs${foodTotal}`, 10, yOffset + 10);
+doc.text(`Ticket Total: Rs${totalPrice}`, 10, yOffset + 20);
+doc.text(`Grand Total: Rs${totalPrice + foodTotal}`, 10, yOffset + 30);
+      doc.text("Thank you for choosing NP Travels!", 10, yOffset + 50);
 
       const pdfURL = doc.output("bloburl");
       const link = document.getElementById('downloadLinkVisible');
@@ -313,6 +330,21 @@
       hideAll();
       document.getElementById('successMessage').style.display = 'block';
     }
+    document.querySelectorAll('input[name="foodOption"]').forEach(cb => {
+  cb.addEventListener('change', updateTotal);
+});
+
+function updateTotal() {
+  const passengerCount = parseInt(document.getElementById('passengerCount').value);
+  const ticketTotal = currentBus.price * passengerCount;
+  const foodCheckboxes = Array.from(document.querySelectorAll('input[name="foodOption"]:checked'));
+  const foodTotal = foodCheckboxes.reduce((sum, cb) => sum + parseInt(cb.dataset.price), 0);
+  const grandTotal = ticketTotal + foodTotal;
+
+  document.getElementById('ticketTotal').innerText = ticketTotal;
+  document.getElementById('foodTotal').innerText = foodTotal;
+  document.getElementById('totalPrice').innerText = grandTotal;
+}
   </script>
 </body>
 </html>
